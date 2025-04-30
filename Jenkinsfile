@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-        PYTHON_HOME = '/usr/bin/python3'  // Set Python home path (adjust if needed)
+        PYTHON_PATH = "C:\\Users\\supri\\AppData\\Local\\Microsoft\\WindowsApps"
+        PYTHON_HOME = '/usr/bin/python3'  // Adjust if needed
     }
 
     stages {
@@ -40,19 +41,21 @@ pipeline {
             steps {
                 script {
                     // Run the Python script that monitors Jenkins job status and retries on failure
-                    sh 'python3 monitor_jenkins.py'
+                    withEnv(["PATH+PYTHON=${env.PYTHON_PATH}"]) {
+                        sh 'python3 monitor_jenkins.py || python monitor_jenkins.py'
+                    }
                 }
             }
         }
     }
-}
-    
-    
-        post {
-            success {
-                echo 'Pipeline completed successfully!'
-            }
-            failure {
-                echo 'Pipeline failed!'
-            }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
         }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
+
