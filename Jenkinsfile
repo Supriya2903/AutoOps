@@ -1,5 +1,10 @@
 pipeline{
     agent any
+
+    triggers{
+        githubPush()
+    }
+
     stages{
         stage('Checkout Code'){
             steps{
@@ -14,6 +19,13 @@ pipeline{
         stage('Test'){
             steps{
                 sh 'mvn test'
+            }
+        }
+        stage('Build Docker Image'){
+            steps{
+                script{
+                    docker.build('your-application-name')
+                }
             }
         }
        
