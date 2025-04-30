@@ -1,11 +1,11 @@
-# Use an official OpenJDK runtime as a parent image
+# Use a base image with OpenJDK 11
 FROM openjdk:11-jdk-slim
 
-# Set the working directory in the container
+# Set working directory inside container
 WORKDIR /app
 
-# Copy the compiled JAR file from the Maven target directory into the container
-COPY target/your-application.jar /app/your-application.jar
+# Copy the JAR file into the container
+COPY target/AutoOps-1.0-SNAPSHOT.jar /app/your-application.jar
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "your-application.jar"]
+# Run the JAR file
+ENTRYPOINT ["java", "-jar", "/app/your-application.jar"]
