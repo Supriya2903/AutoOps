@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     triggers {
-        githubPush()  // This will trigger the pipeline on GitHub push events
+        githubPush()  // Trigger pipeline on GitHub push events
     }
 
     environment {
-        PYTHON_PATH = "C:\\Users\\supri\\AppData\\Local\\Microsoft\\WindowsApps"
-        PYTHON_HOME = '/usr/bin/python3'  // Adjust if needed
+        PYTHON_PATH = "C:\\Users\\supri\\AppData\\Local\\Programs\\Python\\Python311"  // Adjusted to real Python location
     }
 
     stages {
@@ -32,7 +31,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('your-application-name')  // Build Docker image using Maven
+                    docker.build('your-application-name')  // Build Docker image
                 }
             }
         }
@@ -40,9 +39,15 @@ pipeline {
         stage('Monitor Jenkins Job Status') {
             steps {
                 script {
-                    // Run the Python script that monitors Jenkins job status and retries on failure
+                    // Run the Python script from the correct directory
                     withEnv(["PATH+PYTHON=${env.PYTHON_PATH}"]) {
-                        sh 'python3 monitor_jenkins.py || python monitor_jenkins.py'
+                        sh '''
+                            if command -v python3 > /dev/null; then
+                                python3 AutoOps-SelfHealing/monitor_jenkins.py
+                            else
+                                python AutoOps-SelfHealing/monitor_jenkins.py
+                            fi
+                        '''
                     }
                 }
             }
